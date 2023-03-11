@@ -3,6 +3,9 @@
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Course;
+use App\Models\Content;
+use App\Models\Note;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -95,3 +98,62 @@ Route::fallback(function() {
 Route::get('/login', function() {
     return 'login';
 })->name('login'); 
+
+
+
+//Eloquent Model
+//fetch all record
+Route::get('courses', function() {
+    //select * from course left join content on course.id =  content.course_id where is_draft = 0;
+    // $courses = Course::all();  // all records
+    $courses = Course::select('id','name')->with('contents')->where('is_draft', 0)->get(); // where constraints and related table
+
+    return $courses;
+
+});
+
+//single record
+Route::get('course/{id}', function($id) {
+
+    $course = Course::find($id);
+
+    return $course;
+});
+
+//queries 
+
+Route::get('course', function() {
+    $course = Course::where('is_free', 1)->first();
+
+    $course = Course::where('is_free', 1)->get();
+
+    return $course;
+});
+
+
+ //demo purposes
+Route::get('course/create', function() {
+
+    $course = Course::firstOrCreate([
+        'name' => 'Static Value'
+    ]);
+
+    $course = Course::firstOrNew([
+        'name' => 'Static Value'
+
+    ])->save();
+
+
+    $course = new Course;
+    $course->name = 'Static Value';
+    $course->save();
+
+    return $course;
+});
+
+Route::get('contents', function() {
+    
+    $contents = Content::with('notes')->get();
+
+    return $contents;
+});
