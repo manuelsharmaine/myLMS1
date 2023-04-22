@@ -15,7 +15,9 @@ class Course extends Model
 
     //mass assignment
     protected $fillable = ['name', 'description', 'is_draft', 'is_free'];
-    public function contents() {
+
+    public function contents()
+    {
         return $this->hasMany(Content::class);
     }
 
