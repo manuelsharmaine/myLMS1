@@ -17,18 +17,34 @@ use App\Models\Note;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+
+
+Route::group(['namespace' => 'App\Http\Controllers'], function()
+{   
+    Route::get('/', 'ContentController@index')->name('home');
+    
+    Route::get('/login', 'LoginController@show')->name('login.show');
+    Route::post('/login', 'LoginController@login')->name('login.perform');
+
+    Route::get('/register', 'RegisterController@show')->name('register.show');
+    Route::post('/register', 'RegisterController@register')->name('register.perform');
+
+    Route::get('/logout', 'LoginController@logout')->name('logout');
 });
 
 
-Route::get('courses', [App\Http\Controllers\CourseController::class,'index']);
-Route::get('courses/create',[App\Http\Controllers\CourseController::class,'create']);
-Route::post('courses', [App\Http\Controllers\CourseController::class,'store']);
-Route::get('courses/{id}', [App\Http\Controllers\CourseController::class,'show']);
-Route::get('courses/{id}/edit', [App\Http\Controllers\CourseController::class,'edit']);
-Route::patch('courses/{id}', [App\Http\Controllers\CourseController::class,'update']);
-Route::delete('courses/{id}', [App\Http\Controllers\CourseController::class,'destroy']);
+Route::group(['middleware' => ['auth']], function() {
 
-Route::get('/contents/filters',  [App\Http\Controllers\CourseController::class,'newmethod']);
-Route::resource('contents', App\Http\Controllers\ContentController::class);
+
+    Route::get('courses', [App\Http\Controllers\CourseController::class,'index'])->name('courses');
+    Route::get('courses/create',[App\Http\Controllers\CourseController::class,'create']);
+    Route::post('courses', [App\Http\Controllers\CourseController::class,'store']);
+    Route::get('courses/{id}', [App\Http\Controllers\CourseController::class,'show']);
+    Route::get('courses/{id}/edit', [App\Http\Controllers\CourseController::class,'edit']);
+    Route::patch('courses/{id}', [App\Http\Controllers\CourseController::class,'update']);
+    Route::delete('courses/{id}', [App\Http\Controllers\CourseController::class,'destroy']);
+    
+    Route::get('/contents/filters',  [App\Http\Controllers\CourseController::class,'newmethod']);
+    Route::resource('contents', App\Http\Controllers\ContentController::class);
+    
+});

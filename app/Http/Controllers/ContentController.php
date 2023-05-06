@@ -15,9 +15,18 @@ class ContentController extends Controller
      */
     public function index()
     {
-        $contents = Content::with('course')->get();
+        // $contents = Content::with('course')->where('created_by', auth()->user()->id)->get();
+        
+        $contents = Content::with('course')->when(auth()->user(), function($query){
+            $query->where('created_by', auth()->user()->id);
+        })->get();
 
-        return view('content.index', compact('contents'));
+
+        if(auth()->user()) {
+            return view('content.index', compact('contents'));
+        }
+        
+        return view('welcome', compact('contents'));
     }
 
     /**
@@ -43,6 +52,8 @@ class ContentController extends Controller
        $content->name =  $request->name;
        $content->description = $request->description;
        $content->course_id = $request->course_id;
+       $course->created_by = auth()->user()->id;
+
        $content->save();
 
        return redirect('courses');

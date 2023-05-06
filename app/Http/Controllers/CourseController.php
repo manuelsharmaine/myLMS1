@@ -15,6 +15,11 @@ class CourseController extends Controller
     public function index()
     {
         $courses = Course::all();
+        //$courses->count()
+        //$courses->chunk(3)
+        // dd($courses->groupBy('created_by'));
+
+        // $courses = Course::where('created_by', auth()->user()->id)->get();
 
         return view('course.index', compact('courses'));
     }
@@ -62,6 +67,7 @@ class CourseController extends Controller
             $course->fill($request->all());
             $course->is_draft = 0;
             $course->thumbnail = $fileNameToStore;
+            $course->created_by = auth()->user()->id;
             $course->save();
         
         return redirect('courses');
