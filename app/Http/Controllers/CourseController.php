@@ -37,12 +37,32 @@ class CourseController extends Controller
      */
     public function store(Request $request)
     {
-        $course = new Course;
-        // $course->name = $request->name;
-        // $course->description = $request->description;
-        $course->fill($request->all());
-        $course->is_draft = 0;
-        $course->save();
+
+        $file = $request->file('thumbnail');
+
+        if($request->hasFile('thumbnail')) {
+
+            $filenameWithExt = $file->getClientOriginalName();
+
+            $filename = pathinfo($filenameWithExt, PATHINFO_FILENAME);
+
+            $extension = $file->getClientOriginalExtension();
+
+            $fileNameToStore = $filename.'_'.time().'.'.$extension;
+
+           $file->storeAs('public/img', $fileNameToStore); //saving of file locally can be found in storage/public folder
+        
+        } else {
+            $fileNameToStore = "";
+        }
+
+            $course = new Course;
+            // $course->name = $request->name;
+            // $course->description = $request->description;
+            $course->fill($request->all());
+            $course->is_draft = 0;
+            $course->thumbnail = $fileNameToStore;
+            $course->save();
         
         return redirect('courses');
     }

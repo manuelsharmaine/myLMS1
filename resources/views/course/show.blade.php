@@ -8,6 +8,8 @@
     <h1>{{ $course->name }}</h1>
     <p> {{ $course->description }} </p>
 
+    <img src="{{ asset('/storage/img/'.$course->thumbnail) }}" />
+
 
     @if(count($course->contents))
 
